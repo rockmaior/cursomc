@@ -1,6 +1,9 @@
 package com.nelioalves.cursomc.resources;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.nelioalves.cursomc.domain.Categoria;
+import com.nelioalves.cursomc.dto.CategoriaDTO;
 import com.nelioalves.cursomc.services.CategoriaService;
 
 @RestController
@@ -28,6 +32,19 @@ public class CategoriaResource {
 
 	}
 
+	/*
+	 * CategoriaResource. Metodo que retorna todas as categorias: Copiar e colar o
+	 * metodo find sem parâmetro chamando findall e no service chamar o findeall.
+	 * Retornando a lista de categoria , o body do response retorna a list
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	public ResponseEntity<List<CategoriaDTO>> findAll() {
+		List<Categoria> list = service.findAll();
+		List<CategoriaDTO> listDto = list.stream().map(obj -> new CategoriaDTO(obj)).collect(Collectors.toList());
+		return ResponseEntity.ok().body(listDto);
+
+	}
+
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Void> insert(@RequestBody Categoria obj) {
 		obj = service.insert(obj);
@@ -36,7 +53,8 @@ public class CategoriaResource {
 
 	}
 
-	// Aula 33: Em CategoriaResource criar o método delete aproveitando o metodo find()
+	// Aula 33: Em CategoriaResource criar o método delete aproveitando o metodo
+	// find()
 	// recebendo o pathvariable id method DELETE. Service.delete retornatando o
 	// mesmo do metodo update();
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
